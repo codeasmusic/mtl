@@ -2,11 +2,9 @@
 The dataset is actually too small for LSTM to be of any advantage
 compared to simpler, much faster methods such as TF-IDF + LogReg.
 Notes:
-
 - RNNs are tricky. Choice of batch size is important,
 choice of loss and optimizer is critical, etc.
 Some configurations won't converge.
-
 - LSTM loss decrease patterns during training can be quite different
 from what you see with CNNs/MLPs/etc.
 '''
@@ -30,7 +28,7 @@ def imdb_run(index_embedding, dataset=sys.path[0]+'/data/imdb.npz',
 	x_train = sequence.pad_sequences(x_train, maxlen=max_len)
 	x_test = sequence.pad_sequences(x_test, maxlen=max_len)
 
-	embedding_len = 100
+	embedding_len = 200
 	model = Sequential()
 	model.add(Embedding(num_words, embedding_len, input_length=max_len, weights=[index_embedding]))
 	model.add(LSTM(100, dropout=0.2, recurrent_dropout=0.2))
@@ -51,7 +49,7 @@ def imdb_run(index_embedding, dataset=sys.path[0]+'/data/imdb.npz',
 
 if __name__=='__main__':
 
-	glove_file = sys.path[0]+'/data/glove.6B.100d.txt'
+	glove_file = sys.path[0]+'/data/glove.6B.200d.txt'
 	word_embedding = emb.get_word_embedding(glove_file)
 
 	num_words = 5000
@@ -61,4 +59,3 @@ if __name__=='__main__':
 	index_embedding = emb.get_index_embedding(word_index, word_embedding)
 
 	imdb_run(index_embedding, num_words=num_words)
-
