@@ -31,8 +31,8 @@ def get_word_index(word_index_file, num_words, skip_top=0):
 
 
 # get dict: {index: embedding}
-def get_index_embedding(word_index, word_embedding):
-	index_embedding = np.zeros((len(word_index)+1, len(word_embedding.itervalues().next() )))
+def get_index_embedding(word_index, word_embedding, num_words):
+	index_embedding = np.zeros((num_words, len(word_embedding.itervalues().next()) ))
 
 	for (word, i) in word_index.items():
 		embedding = word_embedding.get(word)

@@ -1,3 +1,4 @@
+
 import numpy as np
 
 
@@ -17,4 +18,3 @@ def load_data(dataset, num_words, skip_top=0):
 	return (x_train, y_train), (x_test, y_test)
 
 
-	
