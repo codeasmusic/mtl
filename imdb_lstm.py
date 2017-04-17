@@ -21,13 +21,12 @@ import mytools.embedding as emb
 
 
 
-def imdb_run(index_embedding, dataset, num_words=5000, max_len = 500):
+def imdb_run(index_embedding, dataset, num_words=5000, embedding_len=100, max_len = 500):
 
 	(x_train, y_train), (x_test, y_test) = ds.load_data(dataset, num_words)
 	x_train = sequence.pad_sequences(x_train, maxlen=max_len)
 	x_test = sequence.pad_sequences(x_test, maxlen=max_len)
 
-	embedding_len = 200
 	model = Sequential()
 	model.add(Embedding(num_words, embedding_len, input_length=max_len, weights=[index_embedding]))
 	model.add(LSTM(100, dropout=0.2, recurrent_dropout=0.2))
@@ -50,7 +49,8 @@ if __name__=='__main__':
 
 	home = sys.path[0]
 
-	glove_file = home +'/data/glove/glove.6B.200d.txt'
+	embedding_len = 100
+	glove_file = home +'/data/glove/glove.6B.' + str(embedding_len) +'d.txt'
 	word_embedding = emb.get_word_embedding(glove_file)
 
 	num_words = 5000
@@ -60,4 +60,4 @@ if __name__=='__main__':
 	index_embedding = emb.get_index_embedding(word_index, word_embedding)
 	dataset = home + '/data/imdb/imdb.npz'
 
-	imdb_run(index_embedding, dataset, num_words)
+	imdb_run(index_embedding, dataset, num_words, embedding_len)
