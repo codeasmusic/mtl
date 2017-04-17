@@ -21,8 +21,7 @@ import mytools.embedding as emb
 
 
 
-def imdb_run(index_embedding, dataset=sys.path[0]+'/data/imdb.npz',
-			 num_words=5000, max_len = 500):
+def imdb_run(index_embedding, dataset, num_words=5000, max_len = 500):
 
 	(x_train, y_train), (x_test, y_test) = ds.load_data(dataset, num_words)
 	x_train = sequence.pad_sequences(x_train, maxlen=max_len)
@@ -49,13 +48,16 @@ def imdb_run(index_embedding, dataset=sys.path[0]+'/data/imdb.npz',
 
 if __name__=='__main__':
 
-	glove_file = sys.path[0]+'/data/glove.6B.200d.txt'
+	home = sys.path[0]
+
+	glove_file = home +'/data/glove/glove.6B.200d.txt'
 	word_embedding = emb.get_word_embedding(glove_file)
 
 	num_words = 5000
-	word_index_file = sys.path[0]+'/data/imdb_word_index.json'
+	word_index_file = home +'/data/imdb/imdb_word_index.json'
 	word_index = emb.get_word_index(word_index_file, num_words)
 
 	index_embedding = emb.get_index_embedding(word_index, word_embedding)
+	dataset = home + '/data/imdb/imdb.npz'
 
-	imdb_run(index_embedding, num_words=num_words)
+	imdb_run(index_embedding, dataset, num_words)
