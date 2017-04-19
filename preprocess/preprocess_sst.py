@@ -181,8 +181,13 @@ if __name__=='__main__':
 	# binarization(sent_label_outfiles['dev'], bi_sent_label_outfiles['dev'])
 
 
-	raw_files = bi_sent_label_outfiles
-	dataset_outfile = home + 'sst2.npz'
-	word_index_outfile = home + 'sst2_word_index.json'
+	# raw_files = bi_sent_label_outfiles
+	# dataset_outfile = home + 'sst2.npz'
+	# word_index_outfile = home + 'sst2_word_index.json'
+
+
+	raw_files = sent_label_outfiles
+	dataset_outfile = home + 'sst.npz'
+	word_index_outfile = home + 'sst_word_index.json'
 
 	preprocess_sst(raw_files, dataset_outfile, word_index_outfile)
