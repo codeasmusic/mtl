@@ -187,7 +187,7 @@ if __name__=='__main__':
 
 
 	raw_files = sent_label_outfiles
-	dataset_outfile = home + 'sst.npz'
-	word_index_outfile = home + 'sst_word_index.json'
+	dataset_outfile = home + 'sst1.npz'
+	word_index_outfile = home + 'sst1_word_index.json'
 
 	preprocess_sst(raw_files, dataset_outfile, word_index_outfile)
