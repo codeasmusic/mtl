@@ -28,7 +28,7 @@ def sst1_run(index_embedding, dataset, num_words=5000, embedding_len=100, max_le
 	model = Sequential()
 	model.add(Embedding(num_words, embedding_len, input_length=max_len, weights=[index_embedding]))
 	model.add(LSTM(max_len, dropout=0.4, recurrent_dropout=0.2))
-	model.add(Dense(num_classes, activation='sigmoid', 
+	model.add(Dense(num_classes, activation='sigmoid', 	# try softmax
 					# kernel_regularizer=regularizers.l2(0.01),
 					# activity_regularizer=regularizers.l1(0.01)
 			))
