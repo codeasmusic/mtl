@@ -19,6 +19,8 @@ def get_datasets(raw_files, num_classes_list, num_words, max_len):
 		y_train, train_seq = get_text_sequences(train_file, word_count)
 		y_test, test_seq = get_text_sequences(test_file, word_count)
 
+		# seq_length_stat(test_seq, 5)
+
 		insert_to_global(word_count, num_words, global_word_count)
 		train_test_list.append((train_seq, y_train, test_seq, y_test))
 
@@ -48,7 +50,33 @@ def get_datasets(raw_files, num_classes_list, num_words, max_len):
 
 	print_message(datasets, word_index)
 	return datasets, word_index
-		
+
+
+def seq_length_stat(seqs, slices):
+	max_length = 0
+	for seq in seqs:
+		if(max_length < len(seq)):
+			max_length = len(seq)
+
+	import math
+	unit = math.ceil(1.0 * max_length / slices)
+
+	unit_map = {}
+	for i in xrange(slices):
+		unit_map[(i+1)*unit] = 0
+
+	for seq in seqs:
+		for i in xrange(slices):
+			curr_unit = (i+1)*unit
+			if(len(seq) < curr_unit):
+				unit_map[curr_unit] += 1
+				break
+
+	sorted_unit_map = sorted(unit_map.items(), key=lambda x: x[0])
+	print('max length: {}'.format(max_length))
+	print(sorted_unit_map)
+
+
 
 def get_text_sequences(raw_file, word_count):
 	label_list = []
@@ -83,12 +111,13 @@ def insert_to_global(word_count, num_words, global_word_count):
 			global_word_count[word] = count
 
 
+# index should start from 1, because pad_sequence will pad short sequence with 0.
 def get_word_index(word_count):
 	sorted_word_count = sorted(word_count.items(), key=lambda x: x[1], reverse=True)
 
 	word_index = {}
 	for (word, count) in sorted_word_count:
-		word_index[word] = len(word_index)
+		word_index[word] = len(word_index) + 1
 
 	return word_index
 
@@ -114,16 +143,11 @@ def print_message(datasets, word_index):
 	msg = msg.rstrip(', ') + '), num_words: ' + str(len(word_index))
 	print(msg)
 
-	# print('global_words ', len(word_index))
-	# outfile = open('word_index', 'w')
-	# for (word, index) in word_index.items():
-	# 	outfile.write(word + ':' + str(index) + '\n')
-	# outfile.close()
 
 
 
 if __name__ == '__main__':
-	home = sys.path[0] + '/data/'
+	home = sys.path[0] + '/../data/'
 
 	raw_files = [{'train': home+'sst1/train_sent_label.txt', 
 				  'test': home+'sst1/test_sent_label.txt'},
@@ -133,4 +157,10 @@ if __name__ == '__main__':
 
 	num_classes_list = [5, 2]
 
-	get_datasets(raw_files, num_classes_list, num_words=3000, max_len=100)
+	datasets, word_index = get_datasets(raw_files, num_classes_list, num_words=1000, max_len=50)
+
+
+	outfile = open(sys.path[0]+'/word_index.dat', 'w')
+	for (word, index) in word_index.items():
+		outfile.write(word + ':' + str(index) + '\n')
+	outfile.close()

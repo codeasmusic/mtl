@@ -14,6 +14,8 @@ from tools import preprocess
 from tools import embedding
 
 
+random.seed(113)
+
 
 def rcnn_mtl(datasets, index_embedding, params):
 
@@ -24,7 +26,7 @@ def rcnn_mtl(datasets, index_embedding, params):
 	num_tasks = len(datasets)-1
 	batch_size = params['batch_size']
 	iterations = get_iterations(x_trains, batch_size, params['epochs'])
-	# iterations = 1
+	# iterations = 600
 	print('iterations: {}'.format(iterations))
 
 	itera = 0
@@ -46,7 +48,8 @@ def rcnn_mtl(datasets, index_embedding, params):
 		generate_batch_data(batch_input, batch_output, batch_size, x_trains, y_trains)
 		mtl_model.train_on_batch(batch_input, batch_output)
 
-	evaluate(single_models, x_trains, y_trains)
+	evaluate(single_models, x_trains, y_trains, 'train')
+	evaluate(single_models, x_tests, y_tests, 'test')
 
 	# print '###############################################################################'
 	# print s_layer_dict['shared_dense'].get_weights()
@@ -173,27 +176,33 @@ def generate_batch_data(batch_input, batch_output, batch_size, x_trains, y_train
 	half_batch_size = batch_size / 2
 	start = half_batch_size
 
-	for (in_name, x_train) in x_trains.items():
+	for (in_name, x_train), (out_name, y_train) in zip(x_trains.items(), y_trains.items()):
+		assert (in_name[-1]==out_name[-1])
 		end = len(x_train) - half_batch_size
 		pivot = random.randint(start, end)
-		batch_input[in_name] = x_train[pivot-half_batch_size: pivot+half_batch_size]
+		# print pivot
 
-	for (out_name, y_train) in y_trains.items():
-		end = len(y_train) - half_batch_size
-		pivot = random.randint(start, end)
+		batch_input[in_name] = x_train[pivot-half_batch_size: pivot+half_batch_size]
 		batch_output[out_name] = y_train[pivot-half_batch_size: pivot+half_batch_size]
 
+	# print('batch_input:\n {}'.format(batch_input))
+	# print('batch_output:\n {}'.format(batch_output))
 
-def evaluate(single_models, x_tests, y_tests):
+
+def evaluate(single_models, X, Y, flag):
+	print('\n{}'.format(flag))
+	print('------------------------------------------------')
+
 	for index in xrange(len(single_models)):
 		index = str(index)
-		x_test = x_tests['input_'+index]
-		y_test = y_tests['output_'+index]
+		x = X['input_'+index]
+		y = Y['output_'+index]
 		model = single_models['model_'+index]
 
-		score, acc = model.evaluate(x_test, y_test, verbose=0)
-		print('model_'+ index +':')
-		print('Test score: {}, \tTest accuracy: {}'.format(score, acc))
+		score, acc = model.evaluate(x, y, verbose=0)
+		print('model_{}:'.format(index))
+		print('score: {}, \taccuracy: {}'.format(score, acc))
+		
 
 
 
@@ -211,7 +220,7 @@ if __name__ == '__main__':
 	num_classes_list = [5, 2]
 
 	num_words=5000
-	max_len=80
+	max_len=50
 	embedding_len = 100
 
 	# datasets, word_index = preprocess.get_datasets(raw_files, num_classes_list,
@@ -229,10 +238,10 @@ if __name__ == '__main__':
 	word_index = data[1]
 	index_embedding = data[2]
 
-	num_words = len(word_index)
+	num_words = index_embedding.shape[0]
 
 	params = {'num_words': num_words, 'max_len': max_len, 'embedding_len': embedding_len,
 			  'batch_size': 32, 'epochs': 3, 'filters': 64, 'kernel_size': 10, 'pool_size': 4,
-			  'lstm_units': 90, 'dense_units': 128}
+			  'lstm_units': 50, 'dense_units': 128}
 
 	rcnn_mtl(datasets, index_embedding, params)

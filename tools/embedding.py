@@ -6,7 +6,7 @@ import numpy as np
 def get_index_embedding(word_index, glove_file):
 	word_embedding = get_word_embedding(glove_file)
 
-	index_embedding = np.zeros(( len(word_index), 
+	index_embedding = np.zeros(( len(word_index) + 1,
 								 len(word_embedding.itervalues().next()) ))
 
 	for (word, i) in word_index.items():
