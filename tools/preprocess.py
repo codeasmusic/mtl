@@ -6,7 +6,7 @@ from keras.preprocessing import text, sequence
 from keras.utils.np_utils import to_categorical
 
 
-def get_datasets(raw_files, num_classes_list, num_words, max_len):
+def get_datasets(raw_files, num_classes_list, num_words, max_len_list):
 
 	train_test_list = []
 	global_word_count = {}
@@ -19,7 +19,7 @@ def get_datasets(raw_files, num_classes_list, num_words, max_len):
 		y_train, train_seq = get_text_sequences(train_file, word_count)
 		y_test, test_seq = get_text_sequences(test_file, word_count)
 
-		# seq_length_stat(test_seq, 5)
+		seq_length_stat(test_seq, 5)
 
 		insert_to_global(word_count, num_words, global_word_count)
 		train_test_list.append((train_seq, y_train, test_seq, y_test))
@@ -33,8 +33,8 @@ def get_datasets(raw_files, num_classes_list, num_words, max_len):
 		x_train = get_index_sequences(train_seq, word_index)
 		x_test = get_index_sequences(test_seq, word_index)
 
-		x_train = sequence.pad_sequences(x_train, maxlen=max_len)
-		x_test = sequence.pad_sequences(x_test, maxlen=max_len)
+		x_train = sequence.pad_sequences(x_train, maxlen=max_len_list[index])
+		x_test = sequence.pad_sequences(x_test, maxlen=max_len_list[index])
 
 		y_train = np.asarray(train_test[1])
 		y_test = np.asarray(train_test[3])
@@ -149,11 +149,11 @@ def print_message(datasets, word_index):
 if __name__ == '__main__':
 	home = sys.path[0] + '/../data/'
 
-	raw_files = [{'train': home+'sst1/train_sent_label.txt', 
-				  'test': home+'sst1/test_sent_label.txt'},
+	raw_files = [{'train': home+'sst1/train_label_sent.txt', 
+				  'test': home+'sst1/test_label_sent.txt'},
 
-				 {'train': home+'sst2/bi_train_sent_label.txt', 
-				  'test': home+'sst2/bi_test_sent_label.txt'}]
+				 {'train': home+'sst2/bi_train_label_sent.txt', 
+				  'test': home+'sst2/bi_test_label_sent.txt'}]
 
 	num_classes_list = [5, 2]
 
