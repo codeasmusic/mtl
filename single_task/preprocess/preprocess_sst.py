@@ -153,28 +153,28 @@ def get_index_sequences(raw_sequences, word_index):
 if __name__=='__main__':
 	home = sys.path[0] + '/../data/sst/intermedia/'
 
-	# datasetSents_file = home + 'datasetSentences.txt'
-	# datasetSplit_file = home + 'datasetSplit.txt'
-	# sent_outfiles = { 'train': home + 'train_sents.txt',
-	# 				  'test' : home + 'test_sents.txt',
-	# 				  'dev'  : home + 'dev_sents.txt'	}
+	datasetSents_file = home + 'datasetSentences.txt'
+	datasetSplit_file = home + 'datasetSplit.txt'
+	sent_outfiles = { 'train': home + 'train_sents.txt',
+					  'test' : home + 'test_sents.txt',
+					  'dev'  : home + 'dev_sents.txt'	}
 
-	# sentencesSplit(datasetSents_file, datasetSplit_file, sent_outfiles)
+	sentencesSplit(datasetSents_file, datasetSplit_file, sent_outfiles)
 
-	# label_files = { 'train': home + 'train.txt',
-	# 			 	'test' : home + 'test.txt',
-	# 			 	'dev'  : home + 'dev.txt'	}
+	label_files = { 'train': home + 'train.txt',
+				 	'test' : home + 'test.txt',
+				 	'dev'  : home + 'dev.txt'	}
 	sent_label_outfiles = { 'train': home + 'train_sent_label.txt',
 					 	 	'test' : home + 'test_sent_label.txt',
 					 	 	'dev'  : home + 'dev_sent_label.txt'	}
 
-	# sentencesLabel(sent_outfiles['train'], label_files['train'], sent_label_outfiles['train'])
-	# sentencesLabel(sent_outfiles['test'], label_files['test'], sent_label_outfiles['test'])
-	# sentencesLabel(sent_outfiles['dev'], label_files['dev'], sent_label_outfiles['dev'])
+	sentencesLabel(sent_outfiles['train'], label_files['train'], sent_label_outfiles['train'])
+	sentencesLabel(sent_outfiles['test'], label_files['test'], sent_label_outfiles['test'])
+	sentencesLabel(sent_outfiles['dev'], label_files['dev'], sent_label_outfiles['dev'])
 
-	bi_sent_label_outfiles = { 'train': home + 'bi_train_sent_label.txt',
-						 	   'test' : home + 'bi_test_sent_label.txt',
-						 	   'dev'  : home + 'bi_dev_sent_label.txt'	}
+	# bi_sent_label_outfiles = { 'train': home + 'bi_train_sent_label.txt',
+	# 					 	   'test' : home + 'bi_test_sent_label.txt',
+	# 					 	   'dev'  : home + 'bi_dev_sent_label.txt'	}
 
 	# binarization(sent_label_outfiles['train'], bi_sent_label_outfiles['train'])
 	# binarization(sent_label_outfiles['test'], bi_sent_label_outfiles['test'])
