@@ -5,6 +5,8 @@ import numpy as np
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 
+from scipy.sparse import csr_matrix
+
 from keras.preprocessing import text, sequence
 from keras.utils.np_utils import to_categorical
 
@@ -13,7 +15,7 @@ def get_datasets(raw_files, num_classes_list, num_words, max_len_list):
 
 	train_test_list = []
 	global_word_set = set()
-	thresholds = [5, 5, 5, 20]
+	thresholds = [2, 2, 2, 5]
 
 	for (index, raw_file) in enumerate(raw_files):
 		train_file = raw_file['train']
@@ -62,6 +64,8 @@ def get_local_words(word_count, threshold, y_train, train_seq, num_words):
 	word_freq_matrix = np.zeros([len(train_seq), len(feature_index)])
 
 	for (seq_idx, seq) in enumerate(train_seq):
+		word_freq_list = np.zeros(len(feature_index))
+
 		for word in seq:
 			if (word not in feature_index):
 				continue
@@ -70,7 +74,7 @@ def get_local_words(word_count, threshold, y_train, train_seq, num_words):
 				word_freq_matrix[seq_idx][word_idx] += 1
 
 	sk = SelectKBest(chi2, k="all")
-	sk.fit_transform(word_freq_matrix, y_train)
+	sk.fit_transform(csr_matrix(word_freq_matrix), y_train)
 	score_list = sk.scores_
 
 	word_score = {}
