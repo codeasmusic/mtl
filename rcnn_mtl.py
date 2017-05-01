@@ -102,7 +102,7 @@ def build_models(params, index_embedding):
 	shared_dense = Dense(units=params['dense_units'], activation='relu', name='shared_dense')
 
 	dropout_conv = Dropout(0.3, name='dropout_conv')
-	dropout_dense = Dropout(0.3, name='dropout_dense')
+	dropout_dense = Dropout(0.5, name='dropout_dense')
 
 
 	for index in xrange(len(in_out_names)) :
@@ -119,13 +119,13 @@ def build_models(params, index_embedding):
 
 		mid_layer = concatenate([emb1, emb2], axis=2, name='emb_concat_'+str(index))
 
-		# mid_layer = Bidirectional( LSTM(units=params['lstm_output_dim'], return_sequences=True, 
-		# 								dropout=0.5, recurrent_dropout=0.5 ),
-		# 							name='bi_lstm_'+ str(index))(mid_layer)
-
-		mid_layer = Bidirectional( LSTM(units=params['lstm_output_dim'],
+		mid_layer = Bidirectional( LSTM(units=params['lstm_output_dim'], return_sequences=True, 
 										dropout=0.5, recurrent_dropout=0.5 ),
 									name='bi_lstm_'+ str(index))(mid_layer)
+
+		# mid_layer = Bidirectional( LSTM(units=params['lstm_output_dim'],
+		# 								dropout=0.5, recurrent_dropout=0.5 ),
+		# 							name='bi_lstm_'+ str(index))(mid_layer)
 
 		# mid_layer = shared_reshape(mid_layer)
 		# lstm_output = mid_layer
@@ -141,6 +141,10 @@ def build_models(params, index_embedding):
 		# mid_layer = shared_flatten(mid_layer)
 		# mid_layer = shared_dense(mid_layer)
 		# mid_layer = dropout_dense(mid_layer)
+
+		mid_layer = Flatten(name='flatten_'+ str(index))(mid_layer)
+		# mid_layer = Dense(units=64, activation='sigmoid', name='mid_dense_'+ str(index))(mid_layer)
+		mid_layer = Dropout(0.5, name='mid_dropout_'+ str(index))(mid_layer)
 
 		# merge_output = shared_flatten(merge_output)
 		# merge_output = shared_dense(merge_output)
@@ -332,11 +336,11 @@ if __name__ == '__main__':
 	# pickle.dump(data, open(home+'data.dat', 'w'))
 
 
-	data = pickle.load(open(home+'data.dat'))
+	data = pickle.load(open(home+'data_100.dat'))
 	datasets, word_index, index_embedding = data
 
-	loss_weights = {'output_0': 0.25, 'output_1': 0.25, 
-					'output_2': 0.25, 'output_3': 0.25 }
+	loss_weights = {'output_0': 0.15, 'output_1': 0.15, 
+					'output_2': 0.15, 'output_3': 0.55 }
 
 	processed_datasets, in_out_names = process(datasets)
 
