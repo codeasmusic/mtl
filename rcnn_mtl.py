@@ -115,32 +115,38 @@ def build_models(params, index_embedding):
 										weights=[index_embedding], name='local_embedding_'+str(index))
 
 		emb1 = specific_embedding(in_layer)
-		emb2 = shared_embedding(in_layer)
+		# emb2 = shared_embedding(in_layer)
 
-		mid_layer = concatenate([emb1, emb2], axis=2, name='emb_concat_'+str(index))
+		mid_layer = emb1
 
-		mid_layer = Bidirectional( LSTM(units=params['lstm_output_dim'], return_sequences=True, 
-										dropout=0.5, recurrent_dropout=0.5 ),
+		# mid_layer = concatenate([emb1, emb2], axis=2, name='emb_concat_'+str(index))
+
+		# mid_layer = Bidirectional( LSTM(units=params['lstm_output_dim'], return_sequences=True, 
+		# 								dropout=0.2, recurrent_dropout=0.2),
+		# 							name='bi_lstm_'+ str(index))(mid_layer)
+
+		mid_layer = Bidirectional( LSTM(units=params['lstm_output_dim'],
+										dropout=0.2, recurrent_dropout=0.2),
 									name='bi_lstm_'+ str(index))(mid_layer)
 
 		# mid_layer = shared_reshape(mid_layer)
-		lstm_output = mid_layer
+		# lstm_output = mid_layer
 
-		mid_layer = shared_conv1D(mid_layer)
-		mid_layer = shared_maxPooling1D(mid_layer)
-		mid_layer = dropout_conv(mid_layer)
+		# mid_layer = shared_conv1D(mid_layer)
+		# mid_layer = shared_maxPooling1D(mid_layer)
+		# mid_layer = dropout_conv(mid_layer)
 
 
 
-		merge_output = concatenate([mid_layer, lstm_output], axis=1, name='lstm_conv_'+str(index))
+		# merge_output = concatenate([mid_layer, lstm_output], axis=1, name='lstm_conv_'+str(index))
 
 		# mid_layer = shared_flatten(mid_layer)
 		# mid_layer = shared_dense(mid_layer)
 		# mid_layer = dropout_dense(mid_layer)
 
-		merge_output = shared_flatten(merge_output)
+		# merge_output = shared_flatten(merge_output)
 		# merge_output = shared_dense(merge_output)
-		merge_output = dropout_dense(merge_output)
+		# merge_output = dropout_dense(merge_output)
 
 
 		out_name = in_out_names[index][1]
@@ -148,12 +154,12 @@ def build_models(params, index_embedding):
 
 		if (num_class == 2):
 			loss[out_name] = 'binary_crossentropy'
-			# out_layer = Dense(units=1, activation='sigmoid', name=out_name)(mid_layer)
-			out_layer = Dense(units=1, activation='sigmoid', name=out_name)(merge_output)
+			out_layer = Dense(units=1, activation='sigmoid', name=out_name)(mid_layer)
+			# out_layer = Dense(units=1, activation='sigmoid', name=out_name)(merge_output)
 		else:
 			loss[out_name] = 'categorical_crossentropy'
-			# out_layer = Dense(units=num_class, activation='softmax', name=out_name)(mid_layer)
-			out_layer = Dense(units=num_class, activation='softmax', name=out_name)(merge_output)
+			out_layer = Dense(units=num_class, activation='softmax', name=out_name)(mid_layer)
+			# out_layer = Dense(units=num_class, activation='softmax', name=out_name)(merge_output)
 
 		output_layers.append(out_layer)
 
@@ -316,43 +322,43 @@ if __name__ == '__main__':
 				  'test': home+'imdb/imdb_test_label_sent.txt'} ]
 
 	num_words=5000
-	embedding_len = 50
+	embedding_len = 100
 	num_classes_list = [5, 2, 2, 2]
 	max_len_list = [50, 50, 60, 300]
 
 
-	datasets, word_index = preprocess.get_datasets(raw_files, num_classes_list, num_words, max_len_list)
-	glove_file = home +'glove/glove.6B.' + str(embedding_len) +'d.txt'
-	index_embedding = embedding.get_index_embedding(word_index, glove_file)
-	data = (datasets, word_index, index_embedding)
-	pickle.dump(data, open(home+'data.dat', 'w'))
+	# datasets, word_index = preprocess.get_datasets(raw_files, num_classes_list, num_words, max_len_list)
+	# glove_file = home +'glove/glove.6B.' + str(embedding_len) +'d.txt'
+	# index_embedding = embedding.get_index_embedding(word_index, glove_file)
+	# data = (datasets, word_index, index_embedding)
+	# pickle.dump(data, open(home+'data.dat', 'w'))
 
 
-	# data = pickle.load(open(home+'data.dat'))
-	# datasets, word_index, index_embedding = data
+	data = pickle.load(open(home+'data.dat'))
+	datasets, word_index, index_embedding = data
 
-	# loss_weights = {'output_0': 0.25, 'output_1': 0.25, 
-	# 				'output_2': 0.25, 'output_3': 0.25 }
+	loss_weights = {'output_0': 0.25, 'output_1': 0.25, 
+					'output_2': 0.25, 'output_3': 0.25 }
 
-	# processed_datasets, in_out_names = process(datasets)
+	processed_datasets, in_out_names = process(datasets)
 
-	# params = {  
-	# 			'lstm_output_dim': 64, 
-	# 			'kernel_size': 10,
-	# 			'filters': 128, 
-	# 			'pool_size': 4, 
-	# 			'dense_units': 128,
-	# 			'batch_size': 64, 
-	# 			'epochs': 3, 
-	# 			'num_words': index_embedding.shape[0], 
-	# 			'max_len_list': max_len_list, 
-	# 			'embedding_len': embedding_len,
-	# 			'loss_weights': loss_weights, 
-	# 			'num_classes_list': num_classes_list,
-	# 			'in_out_names': in_out_names
-	# 		}
+	params = {  
+				'lstm_output_dim': 64, 
+				'kernel_size': 10,
+				'filters': 128, 
+				'pool_size': 4, 
+				'dense_units': 128,
+				'batch_size': 64, 
+				'epochs': 3, 
+				'num_words': index_embedding.shape[0], 
+				'max_len_list': max_len_list, 
+				'embedding_len': embedding_len,
+				'loss_weights': loss_weights, 
+				'num_classes_list': num_classes_list,
+				'in_out_names': in_out_names
+			}
 
-	# average_acc = rcnn_mtl(processed_datasets, index_embedding, params)
+	average_acc = rcnn_mtl(processed_datasets, index_embedding, params)
 	
 
 
