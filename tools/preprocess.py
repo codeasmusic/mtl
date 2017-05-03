@@ -11,11 +11,10 @@ from keras.preprocessing import text, sequence
 from keras.utils.np_utils import to_categorical
 
 
-def get_datasets(raw_files, num_classes_list, num_words, max_len_list):
+def get_datasets(raw_files, num_words, num_classes_list, min_freq_list, max_len_list):
 
 	train_test_list = []
 	global_word_set = set()
-	thresholds = [2, 2, 2, 5]
 
 	for (index, raw_file) in enumerate(raw_files):
 		train_file = raw_file['train']
@@ -26,7 +25,7 @@ def get_datasets(raw_files, num_classes_list, num_words, max_len_list):
 		y_test, test_seq = get_text_sequences(test_file, word_count)
 		train_test_list.append((train_seq, y_train, test_seq, y_test))
 
-		local_word_list = get_local_words(word_count, thresholds[index], y_train, train_seq, num_words)
+		local_word_list = get_local_words(word_count, min_freq_list[index], y_train, train_seq, num_words)
 		add_global_words(local_word_list, global_word_set)
 		print('global: ', len(global_word_set))
 
@@ -82,7 +81,6 @@ def get_local_words(word_count, threshold, y_train, train_seq, num_words):
 		word_score[feature] = score_list[idx]
 
 	word_score = sorted(word_score.items(), key=lambda x: x[1], reverse=True)
-	print('word_score:', len(word_score))
 
 	local_word_list = []
 	for (word, score) in word_score[:num_words]:
