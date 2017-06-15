@@ -14,6 +14,8 @@ object SgdBagging {
 			.appName("LR Test")
 			.getOrCreate()
 
+		spark.sparkContext.setLogLevel("ERROR")
+
 		val trainSet = spark.read
 			.option("header", true)
 			.csv("/home/cike/software/spark/sparkData/train_id_age_gender_edu_query.csv")
