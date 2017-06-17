@@ -61,7 +61,7 @@ for i in range(10):
 	batch_xs, batch_ys = mnist.train.next_batch(32)
 	
 	# y_ should be provided, not y
-	# otherwise: Shape [-1,10] has negative dimensions
+	# otherwise: Shape [-1,10] has negative dimensions !!
 	sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
 
@@ -72,8 +72,6 @@ correct_preds = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_preds, tf.float32))
 
 
-
-	# y_ should be provided, not y
-print sess.run(accuracy, 
-			feed_dict={x: mnist.test.images, y_: mnist.test.labels})
+# y_ should be provided, not y
+print sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels})
 
