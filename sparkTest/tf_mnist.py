@@ -65,10 +65,8 @@ for i in range(10):
 	sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
 
-
 # tf.argmax给出tensor某一维的最大值的索引
 correct_preds = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-
 accuracy = tf.reduce_mean(tf.cast(correct_preds, tf.float32))
 
 
